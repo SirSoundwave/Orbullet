@@ -35,44 +35,34 @@ public class GravityControl : MonoBehaviour
     {
         if (Gravity)
         {
-            if (Gravity.fixedDirection)
-            {
-                gravityUp = Gravity.transform.up;
-            } else if (Gravity.complexGravity)
-            {
-                int triIndex = getClosestTriangleIndex();
-                if(triIndex >= 0)
-                {
-                    lastTriIndex = triIndex;
-                    gravityUp = (getTriangleNormal(triIndex));
-                    highlightTriangle(triIndex);
-                    drawTriangleNormal(triIndex);
-                } else
-                {
-                    gravityUp = (getTriangleNormal(lastTriIndex));
-                    highlightTriangle(lastTriIndex);
-                    drawTriangleNormal(lastTriIndex);
-                }
-                gravityUp.Normalize();
-            } else
-            {
-                gravityUp = (transform.position - Gravity.transform.position).normalized;
-
-            }
+            gravityUp = getGravNormals();
             
-
-            Vector3 localUp = transform.up.normalized;
-
-            Quaternion targRot = Quaternion.FromToRotation(localUp, gravityUp) * transform.rotation;
-            rb.rotation = Quaternion.Slerp(rb.rotation, targRot, rotationSpeed * Time.fixedDeltaTime);
             if (applyGravity)
             {
+                //Rotate
+                Vector3 localUp = transform.up.normalized;
+
+                Quaternion targRot = Quaternion.FromToRotation(localUp, gravityUp) * transform.rotation;
+
+                transform.rotation = (Quaternion.SlerpUnclamped(transform.rotation, targRot, rotationSpeed * Time.deltaTime));
+                Debug.Log(transform.rotation);
+
+                //Move
                 rb.AddForce((-gravityUp * Gravity.Gravity) * rb.mass);
+                Debug.DrawRay(transform.position, (-gravityUp * Gravity.Gravity) * rb.mass);
             }
             
 
 
         }
+    }
+    void Update()
+    {
+        if (applyGravity)
+        {
+            
+        }
+       
     }
 
     public Vector3 gravityUpDir()
@@ -85,19 +75,42 @@ public class GravityControl : MonoBehaviour
         applyGravity = b;
     }
 
-    
-    public void getGravNormals()
-    {
-        normals = gravMesh.normals;
-        var triangles = gravMesh.triangles;
-        Vector3 faceNormal;
-        for (int i = 0; i < triangles.Length / 3; i+=3)
-        {
 
-            //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //cube.transform.position = mesh.vertices;
-            faceNormal = (normals[triangles[i + 0]] + normals[triangles[i + 1]] + normals[triangles[i + 2]]) / 3.0f;
-            faceNormal.Normalize();
+    public Vector3 getGravNormals()
+    {
+        //Checks for linear gravity
+        if (Gravity.fixedDirection)
+        {
+            //Sets the up gravity direction to the up direction of the object this script is applied to
+            return Gravity.transform.up.normalized;
+
+        }
+        //Checks for mesh based gravity
+        else if (Gravity.complexGravity)
+        {
+            //Locates the closest mesh triangle
+            int triIndex = getClosestTriangleIndex();
+            Vector3 ret;
+            if (triIndex >= 0)
+            {
+                lastTriIndex = triIndex;
+                ret = (getTriangleNormal(triIndex));
+                highlightTriangle(triIndex);
+                drawTriangleNormal(triIndex);
+            }
+            else
+            {
+                ret = (getTriangleNormal(lastTriIndex));
+                highlightTriangle(lastTriIndex);
+                drawTriangleNormal(lastTriIndex);
+            }
+            return ret.normalized;
+        }
+        //Returns the gravity normal as a vector pointing from a center point towards the object this script is attached to
+        else
+        {
+            return (transform.position - Gravity.transform.position).normalized;
+
         }
     }
 

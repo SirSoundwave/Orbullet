@@ -130,9 +130,10 @@ public class FirstPersonMovement : MonoBehaviour
     {
         if (playerHasControl)
         {
+
             if (targeting)
             {
-                
+
                 if (false && lastTarget != null && lastTarget.activeInHierarchy && (transform.position - lastTarget.transform.position).magnitude < maxTargetDistance)
                 {
                     transform.LookAt(lastTarget.transform.position, gravCont.gravityUpDir());
@@ -150,17 +151,28 @@ public class FirstPersonMovement : MonoBehaviour
                     Camera.main.transform.LookAt(lookPosCam, gravCont.gravityUpDir());
                     transform.LookAt(lookPosChar, gravCont.gravityUpDir());
                 }
-            } else
+            }
+            else
             {
+                /*
+                
+                Vector3 fwd = Quaternion.Euler(rb.rotation.eulerAngles + transform.up * RawRight.x * Time.deltaTime * mouseSenseX) * Vector3.forward;
+                Vector4 right = Vector3.Cross(transform.up, fwd);
+                fwd = Vector3.Cross(right, transform.up);
+
+                Quaternion q = Quaternion.LookRotation(fwd, transform.up);
+
+                */
+
                 //rotates player camera horizontally (on local x axis)
+                
                 transform.Rotate(Vector3.up * RawRight.x * Time.deltaTime * mouseSenseX);
+
                 //rotates player camera vertically (on local y axis)
                 vertLookRot += RawRight.y * Time.deltaTime * mouseSenseY;
                 vertLookRot = Mathf.Clamp(vertLookRot, -60, 60);
                 camT.localEulerAngles = Vector3.left * vertLookRot;
             }
-
-
 
             //gets movement direction
             Vector3 moveDir = new Vector3(RawLeft.x, 0, RawLeft.y).normalized;
@@ -190,7 +202,9 @@ public class FirstPersonMovement : MonoBehaviour
             if (!Physics.Raycast(ray, out hit, 1, groundedMask))
             {
                 //moves the player's rigid body locally on the movement vector
-                rb.transform.Translate(moveAm * Time.fixedDeltaTime, rb.transform);
+                rb.transform.Translate(moveAm * Time.deltaTime, rb.transform);
+                rb.AddRelativeForce(moveAm * Time.deltaTime);
+                Debug.DrawRay(transform.position, rb.velocity, Color.red);
             }
         }
     }

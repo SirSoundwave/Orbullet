@@ -508,9 +508,9 @@ MonoBehaviour:
   Gravity: {fileID: 0}
   rotationSpeed: 10
   applyGravity: 1
-  targetLayers:
+  layerMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 0
 --- !u!114 &5611598255882253557
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -523,9 +523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df6c2be39e1f64e4b80fde6dc51c9d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSenseX: 250
-  mouseSenseY: 250
-  jumpForce: 700
+  mouseSenseX: 100
+  mouseSenseY: 100
+  jumpForce: 850
   groundedMask:
     serializedVersion: 2
     m_Bits: 768

@@ -21,6 +21,8 @@ public class GameOverScript : MonoBehaviour
     private bool activated = false;
 
     private UIInit init;
+
+    private EventSystem events;
  
     void Awake()
     {
@@ -28,6 +30,7 @@ public class GameOverScript : MonoBehaviour
         movement = player.GetComponent<FirstPersonMovement>();
         canvas = GetComponent<Canvas>();
         init = GetComponent<UIInit>();
+        events = transform.parent.GetComponentInChildren<EventSystem>();
         buttons = init.buttons;
         system = init.system;
     }
@@ -41,6 +44,7 @@ public class GameOverScript : MonoBehaviour
             movement.setPlayerControl(false);
             EnemyMovement.setEnemyControl(false);
             init.setUIActive(true);
+            events.enabled = true;
             Debug.Log("Gameover");
         }
     }

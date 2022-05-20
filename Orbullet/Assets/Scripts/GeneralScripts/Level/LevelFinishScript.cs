@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class LevelFinishScript : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class LevelFinishScript : MonoBehaviour
         {
             endScreen.gameObject.SetActive(true);
             endScreen.GetComponent<UIInit>().setUIActive(true);
+            endScreen.GetComponentInChildren<EventSystem>().enabled = true;
             other.GetComponent<FirstPersonMovement>().setPlayerControl(false);
             EnemyMovement.setEnemyControl(false);
         }
